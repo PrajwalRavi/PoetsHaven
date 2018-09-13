@@ -40,3 +40,8 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 autom4te.cache
+
+# Ignore Pycharm configuration files
+.idea/*
+.idea/
+**/.idea/
