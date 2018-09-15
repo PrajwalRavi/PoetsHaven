@@ -13,7 +13,7 @@
             {% csrf_token %}
             <div class="form-group">
                 <label class="display-4">Query:</label>
-                <input class="form-control"  placeholder="{{ org_query }}" name="query">
+                <input class="form-control"  value="{{ org_query }}" name="query">
             </div>
             <button class="btn btn-primary">Search</button>
         </form>
@@ -26,6 +26,8 @@
                     <br>
                 {% endfor %}
             </div>
+        {% else %}
+            <h2>NO RESULTS FOUND</h2>
         {% endif %}
     </div>
 </div>

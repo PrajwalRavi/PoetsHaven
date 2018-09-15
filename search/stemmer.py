@@ -1,10 +1,10 @@
 import math
-
-from nltk.corpus import stopwords
-import nltk
 import pickle
-from nltk.stem import WordNetLemmatizer
+
+import nltk
+from nltk.corpus import stopwords
 from nltk.corpus import wordnet
+from nltk.stem import WordNetLemmatizer
 
 
 # To convert the POS from pos_tag to one used by wordNet lemmetizer
@@ -22,19 +22,19 @@ def get_wordnet_pos(treebank_tag):
 
 
 dict_final = {}
-dict_tf={}
+dict_tf = {}
 dict_idf = {}
 file = 0
 en_stops = set(stopwords.words('english'))
-for file_no in range(1, 309):
-    dict_tf[file_no]={}
+for file_no in range(0, 309):
+    dict_tf[file_no] = {}
     with open("../Corpus/" + str(file_no) + ".txt", "r") as file:
         string = file.read()
         token = nltk.word_tokenize(string.lower())
         tagged = nltk.pos_tag(token)
         lemmatizer = WordNetLemmatizer()
         lemmetized_words = []  # final names to be stores in dictionary
-        characters = [',', '.', ';', '!', '[', ']', '&', '{', '}', "''", "'",'?']
+        characters = [',',':', '.', ';', '!', '[', ']', '&', '{', '}', "''", "'", '?']
         # To lemmatize based on POS and separate the punctuation
         for word in tagged:
             if word[0] not in characters and word[0] not in en_stops:
@@ -44,9 +44,9 @@ for file_no in range(1, 309):
     tf_dict = {}
     for word in lemmetized_words:
         if word not in dict_tf[file_no].keys():
-            dict_tf[file_no][word]=1
+            dict_tf[file_no][word] = 1
         else:
-            dict_tf[file_no][word]+=1
+            dict_tf[file_no][word] += 1
         if word not in tf_dict.keys():
             tf_dict[word] = [1, file_no]
 
@@ -62,12 +62,19 @@ for file_no in range(1, 309):
 for words in dict_final.keys():
     dict_idf[words] = math.log2(308 / (len(dict_final[words])))
 
-for file_no in range(1,309):
+for file_no in dict_tf:
+    max_tf=-1
+    for word in dict_tf[file_no]:
+        max_tf = max(max_tf,dict_tf[file_no][word])
+    for word in dict_tf[file_no]:
+        dict_tf[file_no][word] = 0.4 + 0.6*(dict_tf[file_no][word]/max_tf)
+
+
+for file_no in range(0, 309):
     for word in dict_tf[file_no]:
         dict_tf[file_no][word] *= dict_idf[word]
 
 dict_tf_idf = dict_tf
-filename='tf-idf'
-outfile=open(filename,'wb')
-pickle.dump(dict_tf_idf,outfile)
+outfile = open('tf-idf.dat', 'wb')
+pickle.dump(dict_tf_idf, outfile)
 outfile.close()
