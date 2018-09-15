@@ -16,38 +16,59 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.ADV
     else:
         return wordnet.NOUN
-dict={}
+dict_final={}
+#tf_dict={}
+file=0
 en_stops = set(stopwords.words('english'))
 for file_no in range(1,309):
-	with open(str(file_no)+".txt","r") as file:
+	with open("../Corpus/"+str(file_no)+".txt","r") as file:
 		string=file.read()
 		#print (string)
 		token=nltk.word_tokenize(string.lower())
 		tagged=nltk.pos_tag(token)
 		lemmatizer = WordNetLemmatizer()
 		term=[] #final names to be stores in dictionary
-		
+		characters=[',','.',';','!','[',']','&','{','}', "''","'"]
 		#To lemmatize based on POS and separate the punctuation 
 		for word in tagged:
-			if word[0]!="," and word[0]!="." and word[0]!=";" and word[0]!="!" and word[0] not in en_stops:
+			if word[0] not in characters and word[0] not in en_stops:
 				pos=get_wordnet_pos(word[1])
 				term.append(lemmatizer.lemmatize(word[0],pos))
 		#print (term)
 		
-		for word in term:
+	"""	for word in term:
 			if word not in dict.keys():
 				dict[word]=[1]
 				dict[word].append(file_no)
-				encoded=1
+
 			else:
 				dict[word][0]+=1
 				if file_no not in dict[word]:
-					dict[word].append(file_no)
+					dict[word].append(file_no)"""
+	tf_dict={}
+	for word in term:
+		if word not in tf_dict.keys():
+			tf_dict[word]=[1,file_no]
+
+		else:
+			tf_dict[word][0]+=1
+	#print (tf_dict.keys())
+	for ele in tf_dict.keys():
+		if ele not in dict_final.keys():
+			dict_final[ele]=[tf_dict[ele]]
+		else:
+			dict_final[ele].append(tf_dict[ele])
 
 
-filename='dictionary1'
+filename='freq_doc'
 outfile=open(filename,'wb')
-pickle.dump(dict,outfile)
+pickle.dump(dict_final,outfile)
 outfile.close()
 
-print (dict)
+"""mydict=sorted(dict.keys())
+
+filename='terms'
+outfile=open(filename,'wb')
+pickle.dump(mydict,outfile)
+outfile.close()"""
+print (dict_final)
