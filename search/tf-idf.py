@@ -8,3 +8,4 @@ term_dict=pickle.load(infile)
 infile.close()
 for key in term_dict.keys():
     for value in term_dict[key]:
+        pass

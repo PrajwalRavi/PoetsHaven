@@ -1,3 +1,5 @@
+import math
+
 from nltk.corpus import stopwords
 import nltk
 import pickle
@@ -52,7 +54,7 @@ for file_no in range(1,309):
 
 		else:
 			tf_dict[word][0]+=1
-	#print (tf_dict.keys())
+
 	for ele in tf_dict.keys():
 		if ele not in dict_final.keys():
 			dict_final[ele]=[tf_dict[ele]]
@@ -60,10 +62,10 @@ for file_no in range(1,309):
 			dict_final[ele].append(tf_dict[ele])
 
 
-filename='freq_doc'
-outfile=open(filename,'wb')
-pickle.dump(dict_final,outfile)
-outfile.close()
+# filename='freq_doc'
+# outfile=open(filename,'wb')
+# pickle.dump(dict_final,outfile)
+# outfile.close()
 
 """mydict=sorted(dict.keys())
 
@@ -71,4 +73,7 @@ filename='terms'
 outfile=open(filename,'wb')
 pickle.dump(mydict,outfile)
 outfile.close()"""
-print (dict_final)
+df_dict={}
+for words in dict_final.keys():
+	df_dict[words]=math.log2(308/(len(dict_final[words])))
+print (df_dict)
