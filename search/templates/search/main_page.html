@@ -22,7 +22,7 @@
         {% if results %}
             <div>
                 {% for result in results %}
-                    <a href="{{ result }}">{{ result }}</a>
+                    <a href="{% url 'search:display' result %}">{{ result }}</a>
                     <br>
                 {% endfor %}
             </div>

@@ -8,6 +8,8 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
 
     # /search/<query>
-    #url(r'^(?P<query>[a-zA-Z0-9]+)/$', views.search, name='search')
-    url(r'^[a-zA-Z0-9]+/$', views.search, name='search')
+    url(r'^[a-zA-Z0-9]+/$', views.search, name='search'),
+
+    # /search/display/<id>
+    url(r'^display/(?P<file_id>[0-9]+)/$', views.display_file, name='display'),
 ]
