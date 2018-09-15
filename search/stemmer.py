@@ -23,14 +23,13 @@ def get_wordnet_pos(treebank_tag):
 
 dict_final = {}
 dict_tf={}
-# tf_dict={}
+dict_idf = {}
 file = 0
 en_stops = set(stopwords.words('english'))
 for file_no in range(1, 309):
     dict_tf[file_no]={}
     with open("../Corpus/" + str(file_no) + ".txt", "r") as file:
         string = file.read()
-        # print (string)
         token = nltk.word_tokenize(string.lower())
         tagged = nltk.pos_tag(token)
         lemmatizer = WordNetLemmatizer()
@@ -60,14 +59,15 @@ for file_no in range(1, 309):
         else:
             dict_final[ele].append(tf_dict[ele])
 
-df_dict = {}
 for words in dict_final.keys():
-    df_dict[words] = math.log2(308 / (len(dict_final[words])))
-# print(df_dict)
-print(dict_tf)
-"""mydict=sorted(dict.keys())
+    dict_idf[words] = math.log2(308 / (len(dict_final[words])))
 
-filename='terms'
+for file_no in range(1,309):
+    for word in dict_tf[file_no]:
+        dict_tf[file_no][word] *= dict_idf[word]
+
+dict_tf_idf = dict_tf
+filename='tf-idf'
 outfile=open(filename,'wb')
-pickle.dump(mydict,outfile)
-outfile.close()"""
+pickle.dump(dict_tf_idf,outfile)
+outfile.close()
