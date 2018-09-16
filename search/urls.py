@@ -12,4 +12,6 @@ urlpatterns = [
 
     # /search/display/<id>
     url(r'^display/(?P<file_id>[0-9]+)/$', views.display_file, name='display'),
+
+    url(r'^recreate/$', views.refresh, name='refresh')
 ]

@@ -1,9 +1,12 @@
+import math
 import pickle
 
 import nltk
 from django.http import HttpResponse
 from django.shortcuts import render
 from nltk.corpus import stopwords, wordnet
+
+from search.models import Poem
 
 
 def index(request):
@@ -44,8 +47,9 @@ def get_result(message):
         current_score = 0
         for word in dict_tf_idf[file_no]:
             if word in lemmetized_words:
-                current_score += dict_tf_idf[file_no][word] * 1
+                current_score += dict_tf_idf[file_no][word] * 1  # dot product
 
+        current_score /= math.sqrt(len(lemmetized_words))  # divide by sqrt(length of query)
         if current_score > 0:
             result_dict[current_score] = file_no
 
@@ -72,3 +76,14 @@ def display_file(request, file_id):
     for line in poem_lines:
         s += line + "<br>"
     return HttpResponse(s)
+
+
+def refresh(request):
+    for i in range(0, 309):
+        f = open('Corpus/' + str(i) + '.txt', 'r')
+        title2 = f.readlines()[0]
+        poet2 = f.readlines()[1]
+        poem_obj = Poem(id=i, title=title2, poet=poet2)
+        poem_obj.save()
+        f.close()
+    return None

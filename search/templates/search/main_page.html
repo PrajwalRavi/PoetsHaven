@@ -12,12 +12,13 @@
         <form class="col-sm-7" action="{% url 'search:search' %}">
             {% csrf_token %}
             <div class="form-group">
-                <label class="display-4">Query:</label>
+                <label class="display-4">Poets Haven</label>
                 <input class="form-control"  value="{{ org_query }}" name="query">
             </div>
             <button class="btn btn-primary">Search</button>
         </form>
     </div>
+    <a href="{% url 'search:refresh' %}">Refresh</a>
     <div id="search_results" style="margin-top: 50px">
         {% if results %}
             <div>

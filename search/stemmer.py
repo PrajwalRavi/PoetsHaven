@@ -41,6 +41,8 @@ for file_no in range(0, 309):
                 pos = get_wordnet_pos(word[1])
                 lemmetized_words.append(lemmatizer.lemmatize(word[0], pos))
 
+
+
     tf_dict = {}
     for word in lemmetized_words:
         if word not in dict_tf[file_no].keys():
@@ -62,6 +64,10 @@ for file_no in range(0, 309):
 for words in dict_final.keys():
     dict_idf[words] = math.log2(308 / (len(dict_final[words])))
 
+file_open = open('words.dat','wb')
+pickle.dump(list(dict_idf.keys()),file_open)
+file_open.close()
+
 for file_no in dict_tf:
     max_tf=-1
     for word in dict_tf[file_no]:
@@ -71,8 +77,14 @@ for file_no in dict_tf:
 
 
 for file_no in range(0, 309):
+    sum=0
     for word in dict_tf[file_no]:
         dict_tf[file_no][word] *= dict_idf[word]
+        sum+= math.pow(dict_tf[file_no][word],2)
+    for word in dict_tf[file_no]:
+        dict_tf[file_no][word]/=math.sqrt(sum)
+
+
 
 dict_tf_idf = dict_tf
 outfile = open('tf-idf.dat', 'wb')
