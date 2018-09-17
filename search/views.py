@@ -13,6 +13,7 @@ def index(request):
     return render(request, 'search/main_page.html')
 
 
+# Function to convert POS into Wordnet Convention
 def get_wordnet_pos(treebank_tag):
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
@@ -26,23 +27,25 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
 
 
+# Processing the query and returning the search results
 def get_result(message):
-    words_in_query = nltk.word_tokenize(message.lower())
-    en_stops = set(stopwords.words('english'))
-    tagged = nltk.pos_tag(words_in_query)
+    words_in_query = nltk.word_tokenize(message.lower())  # Tokenisation
+    en_stops = set(stopwords.words('english'))  # Stopwords acquirement
+    tagged = nltk.pos_tag(words_in_query)  # Tagging for POS
     lemmatizer = nltk.WordNetLemmatizer()
     lemmetized_words = []  # final names to be stores in dictionary
     characters = [',', '.', ';', '!', '[', ']', '&', '{', '}', "''", "'", '?']
     for word in tagged:
         if word[0] not in characters and word[0] not in en_stops:
-            pos = get_wordnet_pos(word[1])
+            pos = get_wordnet_pos(word[1])  # POS conversion to map with WordNet Lemmatizer
             lemmetized_words.append(lemmatizer.lemmatize(word[0], pos))
 
-    tf_idf_file = open('search/tf-idf.dat', 'rb')
+    tf_idf_file = open('search/tf-idf.dat', 'rb')  # Unpickling the stored tf-idf file for query matching and ranking
     dict_tf_idf = pickle.load(tf_idf_file)
     tf_idf_file.close()
 
     result_dict = {}
+    # Assigning tf-idf score for each word in query with each file
     for file_no in dict_tf_idf:
         current_score = 0
         for word in dict_tf_idf[file_no]:
