@@ -13,18 +13,22 @@
             {% csrf_token %}
             <div class="form-group">
                 <label class="display-4">Poets Haven</label>
-                <input class="form-control"  value="{{ org_query }}" name="query">
+                <input class="form-control" value="{{ org_query }}" name="query">
             </div>
             <button class="btn btn-primary">Search</button>
         </form>
     </div>
-    <a href="{% url 'search:refresh' %}">Refresh</a>
+    <a href="{% url 'search:refresh' %}" hidden>Refresh</a>
     <div id="search_results" style="margin-top: 50px">
         {% if results %}
             <div>
                 {% for result in results %}
-                    <a href="{% url 'search:display' result %}">{{ result }}</a>
-                    <br>
+                    <div class="card border border-primary rounded"
+                         style="margin-bottom: 20px; padding: 8px 8px 0;">
+                        <a href="{% url 'search:display' result.id %}">{{ result.title }}</a>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp; by {{ result.poet }}</p>
+                        <br>
+                    </div>
                 {% endfor %}
             </div>
         {% else %}

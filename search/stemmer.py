@@ -28,7 +28,7 @@ file = 0
 
 en_stops = set(stopwords.words('english'))
 
-for file_no in range(0, 309):     # Run through each file to collect the words
+for file_no in range(0, 309):  # Run through each file to collect the words
     dict_tf[file_no] = {}
 
     with open("../Corpus/" + str(file_no) + ".txt", "r") as file:
@@ -36,7 +36,7 @@ for file_no in range(0, 309):     # Run through each file to collect the words
         token = nltk.word_tokenize(string.lower())  # tokenisation
         tagged = nltk.pos_tag(token)  # tagging for POS
         lemmatizer = WordNetLemmatizer()
-        lemmetized_words = []  # final names to be stores in dictionary
+        lemmatized_words = []  # final names to be stores in dictionary
         characters = [',', ':', '.', ';', '!', '[', ']', '&', '{', '}', "''", "'", '?']
 
         # To lemmatize based on POS and separate the punctuation
@@ -44,11 +44,11 @@ for file_no in range(0, 309):     # Run through each file to collect the words
             if word[0] not in characters and word[0] not in en_stops:
                 pos = get_wordnet_pos(
                     word[1])  # To convert the POS from pos_tag to one recognised by wordNet lemmetizer
-                lemmetized_words.append(lemmatizer.lemmatize(word[0], pos))
+                lemmatized_words.append(lemmatizer.lemmatize(word[0], pos))
 
     # To create a term frequency dictionary for each file in corpus
     tf_dict = {}
-    for word in lemmetized_words:
+    for word in lemmatized_words:
         if word not in dict_tf[file_no].keys():
             dict_tf[file_no][word] = 1
         else:
@@ -58,6 +58,7 @@ for file_no in range(0, 309):     # Run through each file to collect the words
 
         else:
             tf_dict[word][0] += 1
+
     # To add this dictionary to a final dictionary
     for ele in tf_dict.keys():
         if ele not in dict_final.keys():
@@ -69,7 +70,7 @@ for file_no in range(0, 309):     # Run through each file to collect the words
 for words in dict_final.keys():
     dict_idf[words] = math.log2(308 / (len(dict_final[words])))
 
-# To create a file containing the idf model data structure.Process is called pickling
+# To create a file containing the idf model data structure. Process is called pickling
 file_open = open('words.dat', 'wb')
 pickle.dump(list(dict_idf.keys()), file_open)
 file_open.close()
