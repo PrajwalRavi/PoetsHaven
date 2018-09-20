@@ -1,5 +1,6 @@
 import math
 import pickle
+import time
 
 import nltk
 from django.http import HttpResponse
@@ -13,8 +14,10 @@ def index(request):
     return render(request, 'search/main_page.html')
 
 
-# Function to convert POS into Wordnet Convention
 def get_wordnet_pos(treebank_tag):
+    """
+    Function to convert POS into Wordnet Convention
+    """
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
     elif treebank_tag.startswith('V'):
@@ -27,8 +30,11 @@ def get_wordnet_pos(treebank_tag):
         return wordnet.NOUN
 
 
-# Processing the query and returning the search results
 def get_result(message):
+    """
+    Processing the query and returning the search results
+    """
+
     words_in_query = nltk.word_tokenize(message.lower())  # Tokenisation
     en_stops = set(stopwords.words('english'))  # Stopwords acquirement
     tagged = nltk.pos_tag(words_in_query)  # Tagging for POS
@@ -70,6 +76,7 @@ def search(request):
         Calls the get_result() function which calculates and returns the appropriate
         search results.
     """
+    start_time = time.time()
     message = request.GET.get('query')
     file_results = get_result(message)
     file_objects = []  # stores the file object associated with each file number in file_results
@@ -80,10 +87,15 @@ def search(request):
             file_objects.append(obj)
             poem_names.append(obj.title)
 
-    if len(file_objects) > 10:
+    number_of_results = len(file_objects)
+    if number_of_results > 10:
         file_objects = file_objects[:10]
+
+    end_time = time.time()
+    time_taken = end_time - start_time
     return render(request, 'search/main_page.html',
-                  {'results': file_objects, 'org_query': message})
+                  {'results': file_objects, 'org_query': message, 'time_taken': time_taken,
+                   'number_of_results': number_of_results})
 
 
 def display_file(request, file_id):

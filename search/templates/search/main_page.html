@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
 </head>
 <body>
-<div class="container h-100">
+<div class="container h-100" style="margin-top: 20px">
     <div class="row h-70 justify-content-center align-items-center">
         <form class="col-sm-7" action="{% url 'search:search' %}">
             {% csrf_token %}
@@ -19,7 +19,13 @@
         </form>
     </div>
     <a href="{% url 'search:refresh' %}" hidden>Refresh</a>
-    <div id="search_results" style="margin-top: 50px">
+    {% if time_taken %}
+        <div>
+            <br>
+            <h5><b>Fetched {{ number_of_results }} results in {{ time_taken }} s </b> </h5>
+        </div>
+    {% endif %}
+    <div id="search_results" style="margin-top: 25px">
         {% if results %}
             <div>
                 {% for result in results %}

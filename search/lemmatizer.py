@@ -7,8 +7,10 @@ from nltk.corpus import wordnet
 from nltk.stem import WordNetLemmatizer
 
 
-# Function to convert the POS(Parts of Speech) from pos_tag to one used by wordNet lemmetizer
 def get_wordnet_pos(treebank_tag):
+    """
+    Function to convert the POS(Parts of Speech) from pos_tag to one used by wordNet lemmetizer
+    """
     if treebank_tag.startswith('J'):
         return wordnet.ADJ
     elif treebank_tag.startswith('V'):
