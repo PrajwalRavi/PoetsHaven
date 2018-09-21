@@ -72,25 +72,56 @@ def get_result(message):
 
 def phraseQuery(phrase_query):
     phraseResult = []
-    for file_no in range(0, 309):  # Run through each file to collect the words
+    for file_no in range(0, 50):  # Run through each file to collect the words
         with open("Corpus/" + str(file_no) + ".txt", "r") as file:
             tokens = nltk.word_tokenize(file.read())
 
         for key in range(0, len(tokens)):
-            if tokens[key] == phrase_query[0]:
-                count = 0
-
-                for i in range(0, len(phrase_query)):
-
-                    if i + key < len(phrase_query) and phrase_query[i] == tokens[i + key]:
-                        count += 1
-
-                if count == len(phrase_query):
-                    phraseResult.append(file_no)
-                    break
+            count = 0
+            for i in range(0, len(phrase_query)):
+                if i + key < len(tokens) and phrase_query[i] == tokens[i + key]:
+                    count += 1
                 else:
-                    continue
+                    break
+
+            if count == len(phrase_query):
+                phraseResult.append(file_no)
+                break
+
     return phraseResult
+
+
+def editDistDP(str1, str2, m, n):
+    # Create a table to store results of subproblems
+    dp = [[0 for x in range(n + 1)] for x in range(m + 1)]
+
+    # Fill d[][] in bottom up manner
+    for i in range(m + 1):
+        for j in range(n + 1):
+
+            # If first string is empty, only option is to
+            # isnert all characters of second string
+            if i == 0:
+                dp[i][j] = j  # Min. operations = j
+
+            # If second string is empty, only option is to
+            # remove all characters of second string
+            elif j == 0:
+                dp[i][j] = i  # Min. operations = i
+
+            # If last characters are same, ignore last char
+            # and recur for remaining string
+            elif str1[i - 1] == str2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1]
+
+                # If last character are different, consider all
+            # possibilities and find minimum
+            else:
+                dp[i][j] = 1 + min(dp[i][j - 1],  # Insert
+                                   dp[i - 1][j],  # Remove
+                                   dp[i - 1][j - 1])  # Replace
+
+    return dp[m][n]
 
 
 def search(request):
@@ -105,11 +136,33 @@ def search(request):
         phrase = nltk.word_tokenize(message)
         phrase.remove("'")
         phrase.remove("'")
-        print(phrase)
         file_results = phraseQuery(phrase)
 
     else:
         file_results = get_result(message)
+        if len(file_results) == 0:
+            word_file = open('search/words.dat', 'rb')
+            words = pickle.load(word_file)
+            word_file.close()
+            message = nltk.word_tokenize(message)
+
+            for i in range(0, len(message)):
+                min_edit = 9999999
+                new_word = message[i]
+                for each_word in words:
+                    edit_dis = editDistDP(message[i], each_word,
+                                          len(message[i]),
+                                          len(each_word))
+                    # print(edit_dis)
+                    if edit_dis<min_edit:
+                        new_word = each_word
+                        min_edit = edit_dis
+
+                message[i]=new_word
+                print(new_word  )
+
+            message = " ".join(message)
+            file_results = get_result(message)
 
     file_objects = []  # stores the file object associated with each file number in file_results
     poem_names = []
