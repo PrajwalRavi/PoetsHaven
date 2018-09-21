@@ -70,6 +70,29 @@ def get_result(message):
     return answer
 
 
+def phraseQuery(phrase_query):
+    phraseResult = []
+    for file_no in range(0, 309):  # Run through each file to collect the words
+        with open("Corpus/" + str(file_no) + ".txt", "r") as file:
+            tokens = nltk.word_tokenize(file.read())
+
+        for key in range(0, len(tokens)):
+            if tokens[key] == phrase_query[0]:
+                count = 0
+
+                for i in range(0, len(phrase_query)):
+
+                    if i + key < len(phrase_query) and phrase_query[i] == tokens[i + key]:
+                        count += 1
+
+                if count == len(phrase_query):
+                    phraseResult.append(file_no)
+                    break
+                else:
+                    continue
+    return phraseResult
+
+
 def search(request):
     """
         Handles the queries given by the user.
@@ -78,7 +101,16 @@ def search(request):
     """
     start_time = time.time()
     message = request.GET.get('query')
-    file_results = get_result(message)
+    if message[0] == "'" and message[len(message) - 1] == "'":
+        phrase = nltk.word_tokenize(message)
+        phrase.remove("'")
+        phrase.remove("'")
+        print(phrase)
+        file_results = phraseQuery(phrase)
+
+    else:
+        file_results = get_result(message)
+
     file_objects = []  # stores the file object associated with each file number in file_results
     poem_names = []
     for file_num in file_results:
