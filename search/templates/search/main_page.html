@@ -19,10 +19,14 @@
         </form>
     </div>
     <a href="{% url 'search:refresh' %}" hidden>Refresh</a>
+
     {% if time_taken %}
         <div>
-            <br>
+        <br>
             <h6>Fetched {{ number_of_results }} results in {{ time_taken }} s </h6>
+            {% if did_you_mean %}
+                <h5>Did you mean : <i style="color: blue; font-size: 25px">{{ did_you_mean }}</i> ? </h5>
+            {% endif %}
         </div>
     {% endif %}
     <div id="search_results" style="margin-top: 25px">
