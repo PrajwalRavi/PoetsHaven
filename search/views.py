@@ -147,7 +147,7 @@ def search(request):
             search_query = nltk.word_tokenize(search_query)
 
             for i in range(0, len(search_query)):
-                min_edit = 9999999
+                min_edit = 4
                 new_word = search_query[i]
                 for each_word in words:
                     edit_dis = edit_dist(search_query[i], each_word,
@@ -158,6 +158,7 @@ def search(request):
                         new_word = each_word
                         min_edit = edit_dis
 
+                print(min_edit)
                 search_query[i] = new_word
                 print(new_word)
 
